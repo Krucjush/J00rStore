@@ -1,0 +1,69 @@
+﻿@model J00rStore.Models.ViewModels.ProductViewModel
+
+@{
+    ViewData["Title"] = Model.Product.Id != 0 ? "Update product" : "Create product";
+}
+<div class="container">
+    <div class="row justify-content-center border p-3 mt-4 mx-auto">
+        <form method="post" asp-action="Create" enctype="multipart/form-data">
+
+            <div class="row">
+                <h2 class="text-white">@(Model.Product.Id != 0 ? "Update the product" : "Create a new product")</h2>
+                <hr />
+            </div>
+
+            <div class="row justify-content-center mb-4">
+                <div class="col-8">
+                    <input hidden type="hidden" asp-for="Product.Id" />
+                    <input hidden type="hidden" asp-for="Product.ImageUrl" />
+                    <label asp-for="Product.Name"></label>
+                    <input asp-for="Product.Name" class="form-control" />
+                    <span asp-validation-for="Product.Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row justify-content-center mb-4">
+                <div class="col-8">
+                    <label asp-for="Product.Description"></label>
+                    <textarea class="form-control" asp-for="Product.Description" rows="5"></textarea>
+                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                </div>
+            </div>
+            
+	        <div class="row justify-content-center mb-4">
+		        <div class="col-8">
+			        <label asp-for="Product.ImageUrl"></label>
+			        <input type="file" asp-for="Product.Image" id="file" accept="image/*" class="form-control" onchange="preview()" />
+			        <div id="imagePreview" class="mt-4">
+				        @if(Model.Product.ImageUrl != null)
+				        {
+					        <img width="100%" src="@Model.Product.ImageUrl" alt="Product cover" />
+				        }
+			        </div>
+		        </div>
+	        </div>
+            
+	        <div class="row justify-content-center mb-4">
+		        <div class="col-4">
+			        <label asp-for="Product.BrandId"></label>
+			        <select asp-for="Product.BrandId" asp-items="@Model.Brands" class="form-select">
+				        <option disabled selected>Select brand</option>
+			        </select>
+			        <span asp-validation-for="Product.BrandId" class="text-danger"></span>
+		        </div>
+	        </div>
+
+	        <div class="row justify-content-center mb-4">
+		        <div class="col-8">
+			        <label asp-for="Product.Price"></label>
+			        <input asp-for="Product.Price" class="form-control" />
+			        <span asp-validation-for="Product.Price" class="text-danger"></span>
+		        </div>
+	        </div>
+            
+	        <button type="submit" class="btn btn-success">Create</button>
+
+            <a asp-controller="Product" asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>
