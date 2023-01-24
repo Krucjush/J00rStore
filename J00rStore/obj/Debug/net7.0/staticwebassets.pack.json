@@ -13,6 +13,14 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\img\\products\\7f7a8a9b-c28e-4228-a304-fcf596270c21.jpg",
+      "PackagePath": "staticwebassets\\img\\products\\7f7a8a9b-c28e-4228-a304-fcf596270c21.jpg"
+    },
+    {
+      "Id": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\img\\products\\a552c535-7270-4d9b-b9f9-0662e5919530.jpg",
+      "PackagePath": "staticwebassets\\img\\products\\a552c535-7270-4d9b-b9f9-0662e5919530.jpg"
+    },
+    {
       "Id": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

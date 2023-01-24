@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "7DATc7NrK/lk3LD6nl1DV/wf4Mm7lV72tqv8sUO5W+g=",
+  "Hash": "yIQTG+uyZDtu8JD+Ws18F1BbWcvMxavR6qr+6KjnpJs=",
   "Source": "J00rStore",
   "BasePath": "_content/J00rStore",
   "Mode": "Default",
@@ -83,6 +83,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\img\\products\\7f7a8a9b-c28e-4228-a304-fcf596270c21.jpg",
+      "SourceId": "J00rStore",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\",
+      "BasePath": "_content/J00rStore",
+      "RelativePath": "img/products/7f7a8a9b-c28e-4228-a304-fcf596270c21.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\img\\products\\7f7a8a9b-c28e-4228-a304-fcf596270c21.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\img\\products\\a552c535-7270-4d9b-b9f9-0662e5919530.jpg",
+      "SourceId": "J00rStore",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\",
+      "BasePath": "_content/J00rStore",
+      "RelativePath": "img/products/a552c535-7270-4d9b-b9f9-0662e5919530.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\img\\products\\a552c535-7270-4d9b-b9f9-0662e5919530.jpg"
     },
     {
       "Identity": "C:\\Users\\hiewi\\source\\repos\\J00rStore\\J00rStore\\wwwroot\\js\\site.js",

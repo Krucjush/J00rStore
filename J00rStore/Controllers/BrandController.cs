@@ -118,7 +118,7 @@ namespace J00rStore.Controllers
             return View(brand);
         }
 
-        // GET: Brands/Delete/5
+        // GET: Brands/Detail/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Brands == null)
@@ -136,8 +136,8 @@ namespace J00rStore.Controllers
             return View(brand);
         }
 
-        // POST: Brands/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Brands/Detail/5
+        [HttpPost, ActionName("Detail")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
