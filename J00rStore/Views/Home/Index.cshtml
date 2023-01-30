@@ -11,8 +11,8 @@
 				<img src="@product.ImageUrl" class="card-img-top" alt="@product.Name">
 				<div class="card-body">
 					<h5 class="card-title">@product.Name</h5>
-					<p class="card-text">@product.Description</p>
-					<a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary">Go somewhere</a>
+					<span><b>@product.Price.ToString("c")</b></span>
+					<a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary">Details</a>
 				</div>
 			</div>
 		</div>

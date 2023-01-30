@@ -73,7 +73,7 @@
 		<partial name="_ValidationScriptsPartial" />
 	}
 	<script type="text/javascript">
-		function validateInput() {
+		function valproductIdateInput() {
 
 			const fileInput = document.getElementById('file');
 			const filePath = fileInput.value;
@@ -112,7 +112,7 @@
 				const reader = new FileReader();
 				reader.onload = function (e) {
 					document.getElementById('imagePreview').innerHTML =
-						'<img width="100%" src="' + e.target.result + '" alt="book cover" />';
+						'<img wproductIdth="100%" src="' + e.target.result + '" alt="book cover" />';
 				};
 
 				reader.readAsDataURL(fileInput.files[0]);

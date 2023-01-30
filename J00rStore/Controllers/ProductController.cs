@@ -164,9 +164,9 @@ namespace J00rStore.Controllers
 						System.IO.File.Delete(path);
 				}
 
-			_dbContext.Products.Remove(productViewModel.Product);
-			await _dbContext.SaveChangesAsync();
-			return RedirectToAction(nameof(Index));
+                _dbContext.Products.Remove(productViewModel.Product);
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
 		}
 		public async Task<IActionResult> Detail(int id)
 		{

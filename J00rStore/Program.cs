@@ -1,5 +1,6 @@
 using J00rStore.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,15 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("Default"));
 });
+
+builder.Services.AddDbContext<AppStoreContext>(options =>
+{
+	options.UseSqlite(builder.Configuration.GetConnectionString("Identity"));
+});
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppStoreContext>().AddDefaultTokenProviders().AddDefaultUI();
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -31,4 +41,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapRazorPages();
 app.Run();
