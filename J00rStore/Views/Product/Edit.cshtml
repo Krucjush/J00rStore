@@ -1,0 +1,131 @@
+﻿@model J00rStore.Models.ViewModels.ProductViewModel
+
+@{
+	ViewData["Title"] = "Edit";
+}
+<div class="container">
+	<div class="row justify-content-center border p-3 mt-4 mx-auto">
+		<form method="post" asp-action="Edit" enctype="multipart/form-data">
+
+			<div class="row">
+				<h2 class="text-white">Edit</h2>
+				<hr />
+			</div>
+
+			<div class="row justify-content-center mb-4">
+				<div class="col-8">
+					<input hidden type="hidden" asp-for="Product.Id" />
+					<input hidden type="hidden" asp-for="Product.ImageUrl" />
+					<label asp-for="Product.Name"></label>
+					<input asp-for="Product.Name" class="form-control" />
+					<span asp-validation-for="Product.Name" class="text-danger"></span>
+				</div>
+			</div>
+
+			<div class="row justify-content-center mb-4">
+				<div class="col-8">
+					<label asp-for="Product.Description"></label>
+					<textarea class="form-control" asp-for="Product.Description" rows="5"></textarea>
+					<span asp-validation-for="Product.Description" class="text-danger"></span>
+				</div>
+			</div>
+
+			<div class="row justify-content-center mb-4">
+				<div class="col-8">
+					<label asp-for="Product.ImageUrl"></label>
+					<input type="file" asp-for="Product.Image" id="file" accept="image/*" class="form-control" onchange="preview()" />
+					<div id="imagePreview" class="mt-4">
+						
+						<img width="100%" src="@Model.Product.ImageUrl" alt="Product cover" />
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-center mb-4">
+				<div class="col-4">
+					<label asp-for="Product.BrandId"></label>
+					<select asp-for="Product.BrandId" asp-items="@Model.Brands" class="form-select">
+						<option disabled selected>Select brand</option>
+					</select>
+					<span asp-validation-for="Product.BrandId" class="text-danger"></span>
+				</div>
+			</div>
+
+			<div class="row justify-content-center mb-4">
+				<div class="col-8">
+					<label asp-for="Product.Price"></label>
+					<input asp-for="Product.Price" class="form-control" />
+					<span asp-validation-for="Product.Price" class="text-danger"></span>
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-success">Update</button>
+
+			<a asp-controller="Product" asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+		</form>
+	</div>
+</div>
+@section Scripts
+	{
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+	<script type="text/javascript">
+		function valproductIdateInput() {
+
+			const fileInput = document.getElementById('file');
+			const filePath = fileInput.value;
+
+			if (filePath == '') {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Please upload an image of your book cover.',
+				});
+				return false;
+			}
+
+			return true;
+		}
+
+		function preview() {
+			const fileInput = document.getElementById('file');
+
+			const filePath = fileInput.value;
+
+			if (filePath == '') {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Please upload an image of your book cover.',
+				});
+				document.getElementById('imagePreview').innerHTML = '';
+				return false;
+			}
+
+			const allowedExtensions = /(\.tiff|\.jfif|\.bmp|\.pjp|\.apng|\.gif|\.svg|\.png|\.xbm|\.dib|\.jxl|\.jpeg|\.svgz|\.jpg|\.webp|\.ico|\.tif|\.pjpeg|\.avif)$/i;
+
+			if (allowedExtensions.exec(filePath) && fileInput.files && fileInput.files[0]) {
+
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					document.getElementById('imagePreview').innerHTML =
+						'<img wproductIdth="100%" src="' + e.target.result + '" alt="book cover" />';
+				};
+
+				reader.readAsDataURL(fileInput.files[0]);
+				return true;
+			} else {
+				fileInput.value = '';
+				document.getElementById('imagePreview').innerHTML = '';
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'This file extension is not supported.',
+				});
+				return false;
+			}
+
+		}
+	</script>
+}

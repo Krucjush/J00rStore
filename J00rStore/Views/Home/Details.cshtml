@@ -1,0 +1,26 @@
+﻿@model ShoppingCart
+
+@{
+	ViewData["Title"] = "Details";
+}
+<form method="post">
+	<input type="hidden" asp-for="ProductId"/>
+	<input type="hidden" asp-for="Count"/>
+	<div class="p-5 mb-4 bg-light rounded-3">
+		<div class="container-fluid py-5">
+			<div class="row">
+				<div class="col-8">
+					<h1 class="display-5 fw-bold">@Model.Product.Name</h1>
+					<p class="col-md-8 fs-4">@Model.Product.Description</p>
+				</div>
+				<div class="col-4">
+					<img src="@Model.Product.ImageUrl" class="w-100" alt="@Model.Product.Name image">
+				</div>
+				<div>
+					<p class="card-subtitle"><b>@Model.Product.Price.ToString("c")</b></p>
+				</div>
+			</div>
+			<button class="btn btn-primary btn-lg" type="submit">Add to cart</button>
+		</div>
+	</div>
+</form>
