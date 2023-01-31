@@ -1,0 +1,83 @@
+﻿@model J00rStore.Models.ViewModels.ShoppingCartViewModel
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Summary";
+}
+
+<form method="post" class="mt-4">
+    <div class="row mt-5">
+        <div class="col-12">
+            <p class="fs-3">Shopping Cart</p>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6 px-3">
+            <h4>Details:</h4>
+            <div class="mb-3">
+                <label asp-for="Order.Name">Name</label>
+                <input asp-for="Order.Name" class="form-control" />
+                <span asp-validation-for="Order.Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Order.PhoneNumber">Phone</label>
+                <input asp-for="Order.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Order.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Order.Street">Street Address</label>
+                <input asp-for="Order.Street" class="form-control" />
+                <span asp-validation-for="Order.Street" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Order.City">City</label>
+                <input asp-for="Order.City" class="form-control" />
+                <span asp-validation-for="Order.City" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Order.State">State</label>
+                <input asp-for="Order.State" class="form-control" />
+                <span asp-validation-for="Order.State" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Order.ZipCode">Postal Code</label>
+                <input asp-for="Order.ZipCode" class="form-control" />
+                <span asp-validation-for="Order.ZipCode" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-6 px-3">
+            <h4>Summary:</h4>
+            <ul class="list-group mt-3">
+                @foreach (var details in Model.ListCart)
+                {
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-10">
+                                <strong>@details.Product.Name</strong> <br />
+                                Quantity: @details.Count
+                            </div>
+                            <div class="col-2 my-auto">@((details.Price * details.Count).ToString("c"))</div>
+                        </div>
+                    </li>
+                }
+                <li class="list-group-item">
+                    <div class="row text-warning my-1">
+                        <div class="col-2 my-auto">@Model.Order.TotalPrice.ToString("c")</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+	<hr />
+	<div class="row">
+		<div class="col-12">
+			<button type="submit" class="btn btn-success float-end">Place Order</button>
+		</div>
+	</div>
+
+</form>

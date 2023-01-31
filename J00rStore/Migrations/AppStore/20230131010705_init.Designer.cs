@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace J00rStore.Migrations.AppStore
 {
     [DbContext(typeof(AppStoreContext))]
-    [Migration("20230130190400_init")]
+    [Migration("20230131010705_init")]
     partial class init
     {
         /// <inheritdoc />

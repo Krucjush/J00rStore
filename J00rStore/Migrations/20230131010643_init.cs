@@ -84,7 +84,7 @@ namespace J00rStore.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true),
                     OrderDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ShippingDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     TotalPrice = table.Column<double>(type: "REAL", nullable: false),
@@ -104,11 +104,10 @@ namespace J00rStore.Migrations
                 {
                     table.PrimaryKey("PK_OrderHeaders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderHeaders_Users_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_OrderHeaders_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -117,9 +116,9 @@ namespace J00rStore.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: true),
                     Count = table.Column<int>(type: "INTEGER", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: false)
+                    UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -128,14 +127,12 @@ namespace J00rStore.Migrations
                         name: "FK_ShoppingCarts_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ShoppingCarts_Users_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_ShoppingCarts_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -177,9 +174,9 @@ namespace J00rStore.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderHeaders_ApplicationUserId",
+                name: "IX_OrderHeaders_UserId",
                 table: "OrderHeaders",
-                column: "ApplicationUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_BrandId",
@@ -187,14 +184,14 @@ namespace J00rStore.Migrations
                 column: "BrandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShoppingCarts_ApplicationUserId",
-                table: "ShoppingCarts",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ShoppingCarts_ProductId",
                 table: "ShoppingCarts",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShoppingCarts_UserId",
+                table: "ShoppingCarts",
+                column: "UserId");
         }
 
         /// <inheritdoc />

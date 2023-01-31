@@ -3,6 +3,7 @@ using System;
 using J00rStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace J00rStore.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230131010643_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
@@ -31,7 +34,37 @@ namespace J00rStore.Migrations
                     b.ToTable("Brands");
                 });
 
-            modelBuilder.Entity("J00rStore.Models.Order", b =>
+            modelBuilder.Entity("J00rStore.Models.OrderDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("OrderHeaderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderHeaderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("J00rStore.Models.OrderHeader", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,10 +74,25 @@ namespace J00rStore.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Count")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PaymentIntentId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -52,8 +100,16 @@ namespace J00rStore.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ShippingDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -69,13 +125,11 @@ namespace J00rStore.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrderHeaders");
                 });
 
             modelBuilder.Entity("J00rStore.Models.Product", b =>
@@ -98,17 +152,12 @@ namespace J00rStore.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
-
-                    b.HasIndex("OrderId");
 
                     b.ToTable("Products");
                 });
@@ -123,7 +172,6 @@ namespace J00rStore.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ProductId")
-                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UserId")
@@ -132,6 +180,8 @@ namespace J00rStore.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ShoppingCarts");
                 });
@@ -208,6 +258,32 @@ namespace J00rStore.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("J00rStore.Models.OrderDetails", b =>
+                {
+                    b.HasOne("J00rStore.Models.OrderHeader", "OrderHeader")
+                        .WithMany()
+                        .HasForeignKey("OrderHeaderId");
+
+                    b.HasOne("J00rStore.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderHeader");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("J00rStore.Models.OrderHeader", b =>
+                {
+                    b.HasOne("J00rStore.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("J00rStore.Models.Product", b =>
                 {
                     b.HasOne("J00rStore.Models.Brand", "Brand")
@@ -216,10 +292,6 @@ namespace J00rStore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("J00rStore.Models.Order", null)
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId");
-
                     b.Navigation("Brand");
                 });
 
@@ -227,16 +299,15 @@ namespace J00rStore.Migrations
                 {
                     b.HasOne("J00rStore.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("J00rStore.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Product");
-                });
 
-            modelBuilder.Entity("J00rStore.Models.Order", b =>
-                {
-                    b.Navigation("Products");
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

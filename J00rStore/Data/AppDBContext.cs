@@ -13,8 +13,7 @@ namespace J00rStore.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<OrderHeader> OrderHeaders { get; set; }
-        public DbSet<OrderDetails> OrderDetails { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     }
 }

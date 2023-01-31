@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using J00rStore.Models;
 using J00rStore.Data;
+using Microsoft.EntityFrameworkCore;
 using Stripe.Checkout;
 
 namespace J00rStore.Controllers
@@ -29,15 +30,15 @@ namespace J00rStore.Controllers
 
 			ShoppingCartViewModel = new ShoppingCartViewModel()
 			{
-				ListCart = _dbContext.ShoppingCarts.Where(sc => sc.ApplicationUserId == idClaim.Value),
-				OrderHeader = new OrderHeader()
+				ListCart = _dbContext.ShoppingCarts.Include(x => x.Product).Where(sc => sc.UserId == idClaim.Value),
+				Order = new Order()
 			};
 
 			foreach (var cart in ShoppingCartViewModel.ListCart)
 			{
 				cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price);
 
-				ShoppingCartViewModel.OrderHeader.TotalPrice += cart.Price * cart.Count;
+				ShoppingCartViewModel.Order.TotalPrice += cart.Price * cart.Count;
 			}
 
 			return View(ShoppingCartViewModel);
@@ -52,25 +53,15 @@ namespace J00rStore.Controllers
 
 			ShoppingCartViewModel = new ShoppingCartViewModel()
 			{
-				ListCart = _dbContext.ShoppingCarts.Where(sc => sc.ApplicationUserId == idClaim.Value),
-				OrderHeader = new OrderHeader()
+				ListCart = _dbContext.ShoppingCarts.Include(x => x.Product).Where(sc => sc.UserId == idClaim.Value),
+				Order = new Order()
 			};
-
-			ShoppingCartViewModel.OrderHeader.User =
-				_dbContext.Users.FirstOrDefault(u => u.Id == idClaim.Value);
-
-			ShoppingCartViewModel.OrderHeader.Name = ShoppingCartViewModel.OrderHeader.User.FirstName;
-			ShoppingCartViewModel.OrderHeader.PhoneNumber = ShoppingCartViewModel.OrderHeader.User.PhoneNumber;
-			ShoppingCartViewModel.OrderHeader.Street = ShoppingCartViewModel.OrderHeader.User.Street;
-			ShoppingCartViewModel.OrderHeader.City = ShoppingCartViewModel.OrderHeader.User.City;
-			ShoppingCartViewModel.OrderHeader.State = ShoppingCartViewModel.OrderHeader.User.State;
-			ShoppingCartViewModel.OrderHeader.PostalCode = ShoppingCartViewModel.OrderHeader.User.ZipCode;
 
 			foreach (var cart in ShoppingCartViewModel.ListCart)
 			{
 				cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price);
 
-				ShoppingCartViewModel.OrderHeader.TotalPrice += cart.Price * cart.Count;
+				ShoppingCartViewModel.Order.TotalPrice += cart.Price * cart.Count;
 			}
 
 			return View(ShoppingCartViewModel);
@@ -78,120 +69,62 @@ namespace J00rStore.Controllers
 		[HttpPost]
 		[ActionName("Summary")]
 		[ValidateAntiForgeryToken]
-		public IActionResult PostSummary()
+		public IActionResult PostSummary(ShoppingCartViewModel shoppingCartViewModel)
 		{
 			var claims = User.Identity as ClaimsIdentity;
 			var idClaim = claims?.FindFirst(ClaimTypes.NameIdentifier);
 			if (idClaim == null) { return Unauthorized(); }
 
-			ShoppingCartViewModel.ListCart = _dbContext.ShoppingCarts.Where(sc => sc.ApplicationUserId == idClaim.Value);
+			ShoppingCartViewModel.ListCart = _dbContext.ShoppingCarts.Include(x => x.Product).Where(sc => sc.UserId == idClaim.Value);
 
-			ShoppingCartViewModel.OrderHeader.OrderDate = DateTime.Now;
-			ShoppingCartViewModel.OrderHeader.ApplicationUserId = idClaim.Value;
+			ShoppingCartViewModel.Order.UserId = idClaim.Value;
 
 			foreach (var cart in ShoppingCartViewModel.ListCart)
 			{
 				cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price);
 
-				ShoppingCartViewModel.OrderHeader.TotalPrice += cart.Price * cart.Count;
+				ShoppingCartViewModel.Order.TotalPrice += cart.Price * cart.Count;
 			}
 
-			var user = _dbContext.Users.FirstOrDefault(u => u.Id == idClaim.Value);
-
-			if (user == null) { return Unauthorized(); }
-
-			
-			ShoppingCartViewModel.OrderHeader.PaymentStatus = StaticDetails.PAYMENT_STATUS_DELAYED_PAYMENT;
-			ShoppingCartViewModel.OrderHeader.OrderStatus = StaticDetails.STATUS_APPROVED;
-
-		 	_dbContext.OrderHeaders.Add(ShoppingCartViewModel.OrderHeader);
+		 	_dbContext.Orders.Add(ShoppingCartViewModel.Order);
 			_dbContext.SaveChanges();
 
+			List<Product> products = new List<Product>();
+			int count = 0;
+			double price = 0;
 			foreach (var cart in ShoppingCartViewModel.ListCart)
 			{
-				var orderDetails = new OrderDetails
-				{
-					ProductId = cart.ProductId,
-					OrderId = ShoppingCartViewModel.OrderHeader.Id,
-					Price = cart.Price,
-					Count = cart.Count
-				};
-
-				_dbContext.OrderDetails.Add(orderDetails);
-				_dbContext.SaveChanges();
+				products.Add(cart.Product);
+				price += cart.Price;
+				count += cart.Count;
 			}
-
-			var domain = "https://localhost:7009/";
-			var options = new SessionCreateOptions
+			var orderDetails = new Order
 			{
-				PaymentMethodTypes = new List<string>()
-				{
-					"card"
-				},
-				LineItems = new List<SessionLineItemOptions>(),
-				Mode = "payment",
-				SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartViewModel.OrderHeader.Id}",
-				CancelUrl = domain + "customer/cart/index",
-			};
+				Price = price,
+				Count = count,
+				City = shoppingCartViewModel.Order.City,
+				Products = shoppingCartViewModel.Order.Products,
+				Name = shoppingCartViewModel.Order.Name,
+				Id = shoppingCartViewModel.Order.Id,
+				ZipCode = shoppingCartViewModel.Order.ZipCode,
+				PhoneNumber = shoppingCartViewModel.Order.PhoneNumber,
+				Street = shoppingCartViewModel.Order.Street,
+				State = shoppingCartViewModel.Order.State,
+				TotalPrice = shoppingCartViewModel.Order.TotalPrice,
+				UserId = shoppingCartViewModel.Order.UserId 
+            };
+			_dbContext.Orders.Add(orderDetails);
+			_dbContext.SaveChanges();
 
-			foreach (var cart in ShoppingCartViewModel.ListCart)
-			{
-				var sessionLineItem = new SessionLineItemOptions
-				{
-					PriceData = new SessionLineItemPriceDataOptions
-					{
-						UnitAmount = (long)(cart.Price * 100),
-						Currency = "usd",
-						ProductData = new SessionLineItemPriceDataProductDataOptions
-						{
-							Name = cart.Product.Name
-						},
-					},
-					Quantity = cart.Count,
-				};
-
-				options.LineItems.Add(sessionLineItem);
-			}
-
-			var service = new SessionService();
-			var session = service.Create(options);
-
-			var dbOrder = _dbContext.OrderHeaders.FirstOrDefault(q => q.Id == ShoppingCartViewModel.OrderHeader.Id);
-			if (dbOrder != null)
-			{
-				dbOrder.PaymentDate = DateTime.Now;
-				dbOrder.SessionId = session.Id;
-				dbOrder.PaymentIntentId = session.PaymentIntentId;
-				_dbContext.SaveChanges();
-			}
-
-			Response.Headers.Add("Location", session.Url);
-			return new StatusCodeResult(303);
+			return RedirectToAction(nameof(Index));
 		}
 		public IActionResult OrderConfirmation(int id)
 		{
-			var orderHeader = _dbContext.OrderHeaders.FirstOrDefault(oh => oh.Id == id);
+			var orderHeader = _dbContext.Orders.FirstOrDefault(oh => oh.Id == id);
 
 			if (orderHeader == null) throw new ArgumentNullException(nameof(orderHeader));
 
-			if (orderHeader.PaymentStatus != StaticDetails.PAYMENT_STATUS_DELAYED_PAYMENT)
-			{
-				var service = new SessionService();
-				Session session = service.Get(orderHeader.SessionId);
-
-				if (session.PaymentStatus.ToLower() == "paid")
-				{
-					var dbOrder = _dbContext.OrderHeaders.FirstOrDefault(q => q.Id == id);
-					dbOrder.PaymentDate = DateTime.Now;
-					dbOrder.SessionId = orderHeader.SessionId;
-					dbOrder.PaymentIntentId = session.PaymentIntentId;
-					dbOrder.OrderStatus = StaticDetails.STATUS_APPROVED;
-					dbOrder.PaymentStatus = StaticDetails.PAYMENT_STATUS_APPROVED;
-					_dbContext.SaveChanges();
-				}
-			}
-
-			var shoppingCarts = _dbContext.ShoppingCarts.Where(sc => sc.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+			var shoppingCarts = _dbContext.ShoppingCarts.Where(sc => sc.UserId == orderHeader.UserId).ToList();
 
 			HttpContext.Session.Clear();
 
@@ -230,9 +163,6 @@ namespace J00rStore.Controllers
             var cart = _dbContext.ShoppingCarts.FirstOrDefault(q => q.Id == cartId);
             _dbContext.ShoppingCarts.Remove(cart);
             _dbContext.SaveChanges();
-
-            var count = _dbContext.ShoppingCarts.Where(sc => sc.ApplicationUserId == cart.ApplicationUserId).ToList().Count();
-            HttpContext.Session.SetInt32(StaticDetails.SESSION_CART, count);
 
             return RedirectToAction(nameof(Index));
         }

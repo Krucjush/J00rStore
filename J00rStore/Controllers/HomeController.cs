@@ -30,23 +30,24 @@ namespace J00rStore.Controllers
             return View();
         }
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-	        var product = await _dbContext.Products.FirstOrDefaultAsync(q => q.Id == id);
+        public async Task<IActionResult> Details(int ProductId)
+		{
+	        var product = await _dbContext.Products.FirstOrDefaultAsync(q => q.Id == ProductId);
 
-            if (product == null)
-            {
-                return RedirectToAction(nameof(Index));
-            }
+			if (product == null)
+			{
+				TempData["error"] = "Product was not found.";
+				return RedirectToAction(nameof(Index));
+			}
 
-            var shoppingCart = new ShoppingCart() { ProductId = id, Product = product, Count = 1 };
-            
-	        return View(shoppingCart);
-        }
+            var shoppingCart = new ShoppingCart() { ProductId = ProductId, Product = product, Count = 1 };
+
+			return View(shoppingCart);
+		}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-		public IActionResult Details(ShoppingCart cart)
+        public IActionResult Details(ShoppingCart cart)
         {
 	        var claims = User.Identity as ClaimsIdentity;
 	        var idClaim = claims?.FindFirst(ClaimTypes.NameIdentifier);
@@ -54,22 +55,21 @@ namespace J00rStore.Controllers
 	        {
 		        return Unauthorized();
 	        }
-            cart.ApplicationUserId = idClaim.Value;
+	        cart.UserId = idClaim.Value;
 
-            var dbCart = _dbContext.ShoppingCarts.FirstOrDefault(s => s.ApplicationUserId == idClaim.Value && s.ProductId == cart.ProductId);
+	        var dbCart = _dbContext.ShoppingCarts.FirstOrDefault(s => s.UserId == idClaim.Value && s.ProductId == cart.ProductId);
 
-            if (dbCart == null)
-            {
-                _dbContext.ShoppingCarts.Add(cart);
-                _dbContext.SaveChanges();
-                var count = _dbContext.ShoppingCarts.Where(s => s.ApplicationUserId == idClaim.Value).ToList().Count();
-            }
-            else
-            {
-                dbCart.Count += cart.Count;
-            }
+	        if (dbCart == null)
+	        {
+		        _dbContext.ShoppingCarts.Add(cart);
+		        _dbContext.SaveChanges();
+	        }
+	        else
+	        {
+		        dbCart.Count += cart.Count;
+	        }
 
-            return RedirectToAction(nameof(Index));
+	        return RedirectToAction(nameof(Index));
         }
-    }
+	}
 }
