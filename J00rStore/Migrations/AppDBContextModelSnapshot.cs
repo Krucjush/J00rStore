@@ -52,9 +52,6 @@ namespace J00rStore.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -98,17 +95,12 @@ namespace J00rStore.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
-
-                    b.HasIndex("OrderId");
 
                     b.ToTable("Products");
                 });
@@ -122,6 +114,9 @@ namespace J00rStore.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("ProductId")
                         .IsRequired()
                         .HasColumnType("INTEGER");
@@ -130,6 +125,8 @@ namespace J00rStore.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
@@ -216,27 +213,29 @@ namespace J00rStore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("J00rStore.Models.Order", null)
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId");
-
                     b.Navigation("Brand");
                 });
 
             modelBuilder.Entity("J00rStore.Models.ShoppingCart", b =>
                 {
+                    b.HasOne("J00rStore.Models.Order", "Order")
+                        .WithMany("ShoppingCarts")
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("J00rStore.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Order");
+
                     b.Navigation("Product");
                 });
 
             modelBuilder.Entity("J00rStore.Models.Order", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("ShoppingCarts");
                 });
 #pragma warning restore 612, 618
         }

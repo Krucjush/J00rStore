@@ -9,9 +9,8 @@ namespace J00rStore.Models
 	{
 		public int Id { get; set; }
 		[ValidateNever]
-		public IEnumerable<Product> Products { get; set; }
+		public IEnumerable<ShoppingCart> ShoppingCarts { get; set; }
 		public int Count { get; set; }
-		public double Price { get; set; }
 		public string? UserId { get; set; }
 		[Required] 
 		public double TotalPrice { get; set; }

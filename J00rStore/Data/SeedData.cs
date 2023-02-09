@@ -82,7 +82,7 @@ namespace J00rStore.Data
 
 			if (!await context.Users.AnyAsync(u => u.FirstName == adminUser.FirstName))
 			{
-				var result = await userManager.CreateAsync(adminUser, "Wsei@1");
+				var result = await userManager.CreateAsync(adminUser, "Example1!");
 
 				if (result.Succeeded)
 					await userManager.AddToRoleAsync(adminUser, StaticDetails.ROLE_ADMIN);
@@ -106,10 +106,10 @@ namespace J00rStore.Data
 
 			if (!await context.Users.AnyAsync(u => u.FirstName == individualUser.FirstName))
 			{
-				var result = await userManager.CreateAsync(individualUser, "Wsei@1");
+				var result = await userManager.CreateAsync(individualUser, "Example1!");
 
 				if (result.Succeeded)
-					await userManager.AddToRoleAsync(individualUser, StaticDetails.ROLE_USER_COMPANY);
+					await userManager.AddToRoleAsync(individualUser, StaticDetails.ROLE_USER_INDIVIDUAL);
 			}
 
 			context.SaveChanges();

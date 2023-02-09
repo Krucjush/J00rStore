@@ -27,7 +27,7 @@
         {
             <div class="row">
                 <div class="col-2 text-center">
-                    <img style="height: 200px;" src="@cart.Product.ImageUrl" alt="@cart.Product.Name image" title="@cart.Product.Name" />
+                    <img style="width: 200px;" src="@cart.Product.ImageUrl" alt="@cart.Product.Name image" title="@cart.Product.Name" />
                 </div>
                 <div class="col-6">
                     <h4><strong>@cart.Product.Name</strong></h4>
@@ -49,7 +49,7 @@
 
         <div class="row">
             <div class="col-12 text-end">
-                <p>Total (USD) <strong>@Model.Order.TotalPrice.ToString("c")</strong></p>
+                <p>Total (PLN) <strong>@Model.Order.TotalPrice</strong></p>
             </div>
         </div>
 

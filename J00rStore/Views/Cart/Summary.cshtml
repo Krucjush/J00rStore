@@ -60,7 +60,7 @@
                                 <strong>@details.Product.Name</strong> <br />
                                 Quantity: @details.Count
                             </div>
-                            <div class="col-2 my-auto">@((details.Price * details.Count).ToString("c"))</div>
+                            <div class="col-2 my-auto">@((details.Product.Price * details.Count).ToString("c"))</div>
                         </div>
                     </li>
                 }

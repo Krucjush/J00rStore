@@ -21,5 +21,8 @@ namespace J00rStore.Models
 
 		[NotMapped]
         public double Price { get; set; }
+
+        public int? OrderId { get; set; }
+        public Order? Order { get; set; }
     }
 }
