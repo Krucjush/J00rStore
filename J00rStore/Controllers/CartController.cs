@@ -12,7 +12,8 @@ namespace J00rStore.Controllers
 	public class CartController : Controller
 	{
 		private readonly AppDBContext _dbContext;
-		[BindProperty] public ShoppingCartViewModel ShoppingCartViewModel { get; set; }
+		[BindProperty] 
+		public ShoppingCartViewModel ShoppingCartViewModel { get; set; }
 		public int TotalPrice { get; set; }
 
 		public CartController(AppDBContext dbContext)
